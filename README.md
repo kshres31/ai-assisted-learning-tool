@@ -5,10 +5,11 @@ built to explore a specific learning question: can staged, explanation-focused a
 students debug without immediately giving away the answer?
 
 The current milestone includes a typed FastAPI service and a curated catalog of four exercises.
-Students can browse or filter exercise summaries and retrieve starter code plus visible examples.
-Hidden evaluation cases stay inside the domain model for the later submission runner. Submission,
-AI-assistance, analytics, experiment, and frontend workflows will be added in later milestones. No
-usability study has been conducted and no participant outcomes are claimed.
+Students can browse or filter exercise summaries, retrieve starter code plus visible examples, and
+submit solutions to a constrained child-process runner. Hidden evaluation cases stay inside the
+domain model and are scrubbed from submission responses. AI assistance, analytics, experiment, and
+frontend workflows will be added in later milestones. No usability study has been conducted and no
+participant outcomes are claimed.
 
 ## Planned learning flow
 
@@ -50,6 +51,27 @@ Current endpoints:
 - `GET /api/exercises`
 - `GET /api/exercises?difficulty=beginner&tag=loops`
 - `GET /api/exercises/{exercise_id}`
+- `POST /api/exercises/{exercise_id}/submit`
+
+Example submission body:
+
+```json
+{
+  "code": "def double_number(number):\n    return number * 2\n"
+}
+```
+
+## Code-execution boundary
+
+Submissions are limited to 8 KB and checked for blocked syntax and attributes. Accepted code runs
+with restricted built-ins in a separate isolated Python process, temporary directory, sanitized
+environment, and two-second timeout. Hidden test inputs and expected values are removed from API
+responses.
+
+This is deliberate defense in depth for a local educational prototype, not a secure sandbox for
+hostile internet users. It does not provide container-level memory, filesystem, process, or network
+isolation. A public deployment must move execution to locked-down disposable containers or a
+dedicated sandbox service.
 
 Run the checks:
 
@@ -66,7 +88,7 @@ Git. The default mock provider will require no key, paid account, or network con
 ## Current limitations
 
 - Exercises are bundled in Python; an authoring/import format has not been added yet.
-- Student-code isolation and AI-provider boundaries are designed but not implemented yet.
+- The child-process runner is intentionally local-only and not a production security boundary.
 - The planned local analytics store is not suitable for collecting identifying research data.
 - The A/B experiment and usability study are designs, not completed research.
 
