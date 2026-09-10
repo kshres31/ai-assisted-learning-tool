@@ -1,0 +1,16 @@
+[project]
+name = "ai-assisted-learning-tool"
+version = "0.1.0"
+description = "A local-first coding practice platform with staged AI assistance."
+requires-python = ">=3.12"
+
+[tool.pytest.ini_options]
+pythonpath = ["backend"]
+testpaths = ["backend/tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
