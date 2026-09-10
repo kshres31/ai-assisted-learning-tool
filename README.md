@@ -4,10 +4,11 @@ An in-progress, local-first coding practice platform for Python exercises. The p
 built to explore a specific learning question: can staged, explanation-focused assistance help
 students debug without immediately giving away the answer?
 
-This repository currently contains the application foundation: a typed FastAPI service, a health
-endpoint, automated checks, and the initial architecture and safety boundaries. Exercise,
-submission, AI-assistance, analytics, experiment, and frontend workflows will be added in later
-milestones. No usability study has been conducted and no participant outcomes are claimed.
+The current milestone includes a typed FastAPI service and a curated catalog of four exercises.
+Students can browse or filter exercise summaries and retrieve starter code plus visible examples.
+Hidden evaluation cases stay inside the domain model for the later submission runner. Submission,
+AI-assistance, analytics, experiment, and frontend workflows will be added in later milestones. No
+usability study has been conducted and no participant outcomes are claimed.
 
 ## Planned learning flow
 
@@ -43,6 +44,13 @@ uvicorn app.main:app --reload
 
 Then open `http://127.0.0.1:8000/docs` for the generated API documentation.
 
+Current endpoints:
+
+- `GET /api/health`
+- `GET /api/exercises`
+- `GET /api/exercises?difficulty=beginner&tag=loops`
+- `GET /api/exercises/{exercise_id}`
+
 Run the checks:
 
 ```powershell
@@ -57,7 +65,7 @@ Git. The default mock provider will require no key, paid account, or network con
 
 ## Current limitations
 
-- Only the health endpoint is implemented in this first milestone.
+- Exercises are bundled in Python; an authoring/import format has not been added yet.
 - Student-code isolation and AI-provider boundaries are designed but not implemented yet.
 - The planned local analytics store is not suitable for collecting identifying research data.
 - The A/B experiment and usability study are designs, not completed research.

@@ -20,7 +20,10 @@ flowchart LR
 ## Planned responsibilities
 
 - `backend/app/api` validates HTTP input and maps service results to response models.
-- `backend/app/services` will own exercise, submission, hint, and experiment workflows.
+- `backend/app/models` contains internal exercise definitions, including hidden evaluation cases.
+- `backend/app/schemas` exposes a separate public representation that cannot leak hidden cases.
+- `backend/app/services` owns catalog filtering now and will add submission, hint, and experiment
+  workflows in later milestones.
 - `backend/app/ai` will hide provider-specific requests behind one interface.
 - `backend/app/execution` will run student code outside the API process with strict time and
   resource limits. It is a local prototype, not a production-grade hostile-code sandbox.
