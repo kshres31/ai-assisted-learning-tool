@@ -8,9 +8,10 @@ The current milestone includes a typed FastAPI service and a curated catalog of 
 Students can browse or filter exercise summaries, retrieve starter code plus visible examples, and
 submit solutions to a constrained child-process runner. Hidden evaluation cases stay inside the
 domain model and are scrubbed from submission responses. Three staged hint levels and explicit
-solution explanations run through a modular offline provider. Analytics, experiment, a compatible
-external provider, and frontend workflows will be added in later milestones. No usability study
-has been conducted and no participant outcomes are claimed.
+solution explanations run through a modular offline provider. Anonymous A/B sessions assign and
+enforce control or assisted conditions while local SQLite analytics record only learning events. A
+compatible external provider and frontend workflows will be added in later milestones. No
+usability study has been conducted and no participant outcomes are claimed.
 
 ## Planned learning flow
 
@@ -55,6 +56,9 @@ Current endpoints:
 - `POST /api/exercises/{exercise_id}/submit`
 - `POST /api/exercises/{exercise_id}/hint`
 - `POST /api/exercises/{exercise_id}/explain`
+- `POST /api/sessions`
+- `POST /api/sessions/{session_id}/confidence`
+- `GET /api/sessions/{session_id}/analytics`
 
 Example submission body:
 
@@ -84,6 +88,20 @@ technique-focused, and likely-bug hints; a solution explanation is returned only
 explicit `/explain` endpoint. Provider identity and fallback reasons remain visible in responses.
 See [`docs/ai-design.md`](docs/ai-design.md) for the design and privacy rules.
 
+## Experiment and analytics
+
+`POST /api/sessions` creates a random anonymous identifier and assigns either the `control` or
+`ai_assisted` condition. In experiment mode, send that identifier as the `X-Session-ID` header on
+submission and assistance requests. The backend rejects hints and explanations for control
+sessions, so the condition is more than a visual toggle. Requests without the header remain
+available as ordinary practice mode and are not included in study analytics.
+
+SQLite records outcomes and durations, but not submitted code or identifying profile fields. The
+submission `duration_seconds` value is client-reported active time and is capped at two hours per
+attempt. See [`docs/experiment-design.md`](docs/experiment-design.md) for the planned procedure,
+metrics, limitations, and ethics. This is study infrastructure; it is not evidence that a study
+has taken place.
+
 Run the checks:
 
 ```powershell
@@ -101,7 +119,7 @@ Git. The default mock provider will require no key, paid account, or network con
 - Exercises are bundled in Python; an authoring/import format has not been added yet.
 - The child-process runner is intentionally local-only and not a production security boundary.
 - The current assistance provider is a deterministic mock, not an external language model.
-- The planned local analytics store is not suitable for collecting identifying research data.
+- The local analytics store is not suitable for collecting identifying research data.
 - The A/B experiment and usability study are designs, not completed research.
 
 ## License

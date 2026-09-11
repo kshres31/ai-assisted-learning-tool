@@ -3,6 +3,7 @@ from enum import StrEnum
 
 from app.ai.provider import ProviderSelection
 from app.services.exercise_catalog import ExerciseCatalog
+from app.services.experiment_service import ExperimentService
 
 
 class AssistanceKind(StrEnum):
@@ -20,13 +21,29 @@ class AssistanceReply:
 
 
 class AssistanceService:
-    def __init__(self, catalog: ExerciseCatalog, selection: ProviderSelection) -> None:
+    def __init__(
+        self,
+        catalog: ExerciseCatalog,
+        selection: ProviderSelection,
+        experiment: ExperimentService,
+    ) -> None:
         self._catalog = catalog
         self._selection = selection
+        self._experiment = experiment
 
-    async def hint(self, exercise_id: str, code: str, level: int) -> AssistanceReply:
+    async def hint(
+        self,
+        exercise_id: str,
+        code: str,
+        level: int,
+        session_id: str | None = None,
+    ) -> AssistanceReply:
         exercise = self._catalog.get(exercise_id)
+        if session_id is not None:
+            self._experiment.ensure_assistance_available(session_id)
         content = await self._selection.provider.generate_hint(exercise, code, level)
+        if session_id is not None:
+            self._experiment.record_hint(session_id, exercise_id, level)
         return AssistanceReply(
             kind=AssistanceKind.HINT,
             content=content,
@@ -35,9 +52,18 @@ class AssistanceService:
             fallback_reason=self._selection.fallback_reason,
         )
 
-    async def explain(self, exercise_id: str, code: str) -> AssistanceReply:
+    async def explain(
+        self,
+        exercise_id: str,
+        code: str,
+        session_id: str | None = None,
+    ) -> AssistanceReply:
         exercise = self._catalog.get(exercise_id)
+        if session_id is not None:
+            self._experiment.ensure_assistance_available(session_id)
         content = await self._selection.provider.explain_solution(exercise, code)
+        if session_id is not None:
+            self._experiment.record_explanation(session_id, exercise_id)
         return AssistanceReply(
             kind=AssistanceKind.EXPLANATION,
             content=content,

@@ -7,6 +7,7 @@ from app.execution.models import ExecutionResult
 
 class SubmissionRequest(BaseModel):
     code: Annotated[str, Field(min_length=1, max_length=8_000)]
+    duration_seconds: Annotated[float, Field(ge=0, le=7_200)] = 0
 
 
 class TestOutcomeResponse(BaseModel):

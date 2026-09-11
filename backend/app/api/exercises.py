@@ -1,12 +1,13 @@
 from typing import Annotated
 
-from fastapi import APIRouter, HTTPException, Query, status
+from fastapi import APIRouter, Header, HTTPException, Query, status
 
 from app.dependencies import ExerciseCatalogDependency, SubmissionServiceDependency
 from app.models.exercise import Difficulty
 from app.schemas.exercise import ExerciseDetail, ExerciseSummary
 from app.schemas.submission import SubmissionRequest, SubmissionResponse
 from app.services.exercise_catalog import ExerciseNotFoundError
+from app.services.experiment_service import SessionNotFoundError
 
 router = APIRouter(prefix="/exercises", tags=["exercises"])
 
@@ -40,12 +41,26 @@ def submit_exercise(
     exercise_id: str,
     submission: SubmissionRequest,
     service: SubmissionServiceDependency,
+    session_id: Annotated[
+        str | None,
+        Header(alias="X-Session-ID", min_length=8, max_length=100),
+    ] = None,
 ) -> SubmissionResponse:
     try:
-        result = service.submit(exercise_id, submission.code)
+        result = service.submit(
+            exercise_id,
+            submission.code,
+            session_id=session_id,
+            duration_seconds=submission.duration_seconds,
+        )
     except ExerciseNotFoundError as error:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Exercise not found",
+        ) from error
+    except SessionNotFoundError as error:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Session not found",
         ) from error
     return SubmissionResponse.from_domain(result)

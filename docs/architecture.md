@@ -15,6 +15,7 @@ flowchart LR
     AI --> Mock[Mock provider]
     AI -. optional .-> Compatible[OpenAI-compatible provider]
     Runner --> Process[Isolated child process]
+    Analytics --> SQLite[(Local SQLite database)]
 ```
 
 ## Planned responsibilities
@@ -22,13 +23,13 @@ flowchart LR
 - `backend/app/api` validates HTTP input and maps service results to response models.
 - `backend/app/models` contains internal exercise definitions, including hidden evaluation cases.
 - `backend/app/schemas` exposes a separate public representation that cannot leak hidden cases.
-- `backend/app/services` owns catalog filtering now and will add submission, hint, and experiment
-  workflows in later milestones.
+- `backend/app/services` owns catalog, submission, assistance, experiment assignment, and analytics
+  workflows.
 - `backend/app/ai` hides deterministic mock assistance behind an asynchronous provider interface;
   a compatible external provider is a later milestone.
 - `backend/app/execution` validates syntax, starts a separate isolated Python process with a
   restricted built-in namespace, and enforces a two-second timeout.
-- `backend/app/database` will persist anonymous sessions, attempts, hints, and completions.
+- `backend/app/database` persists anonymous sessions and constrained learning events in SQLite.
 - `frontend` will be a small dependency-free client so the learning interaction remains easy
   to inspect and explain.
 
@@ -48,6 +49,7 @@ tool from being misrepresented as a safe remote code-execution service.
 
 ## Privacy boundary
 
-Experiment sessions will use random identifiers rather than names or email addresses. The
-application will record only learning events required for the designed study. No study has been
-conducted and no participant results are claimed.
+Experiment sessions use random identifiers rather than names or email addresses. The application
+records only events required for the designed study and deliberately excludes submitted source
+code. Practice requests without a session header are not recorded. No study has been conducted and
+no participant results are claimed.
