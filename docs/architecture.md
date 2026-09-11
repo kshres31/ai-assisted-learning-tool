@@ -24,7 +24,8 @@ flowchart LR
 - `backend/app/schemas` exposes a separate public representation that cannot leak hidden cases.
 - `backend/app/services` owns catalog filtering now and will add submission, hint, and experiment
   workflows in later milestones.
-- `backend/app/ai` will hide provider-specific requests behind one interface.
+- `backend/app/ai` hides deterministic mock assistance behind an asynchronous provider interface;
+  a compatible external provider is a later milestone.
 - `backend/app/execution` validates syntax, starts a separate isolated Python process with a
   restricted built-in namespace, and enforces a two-second timeout.
 - `backend/app/database` will persist anonymous sessions, attempts, hints, and completions.

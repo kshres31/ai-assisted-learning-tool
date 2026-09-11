@@ -18,6 +18,15 @@ EXERCISES = (
             ExerciseTestCase("negative number", (-3,), -6),
             ExerciseTestCase("zero", (0,), 0),
         ),
+        hints=(
+            "Think about the arithmetic relationship between the input and the requested output.",
+            "Use the multiplication operator with the function parameter and the value 2.",
+            "Return the multiplication expression from the function instead of only computing it.",
+        ),
+        solution_explanation=(
+            "The function needs one expression: multiply `number` by 2 and return that value. "
+            "Returning matters because a calculation that is not returned is lost to the caller."
+        ),
     ),
     Exercise(
         id="sum-even-numbers",
@@ -36,6 +45,16 @@ EXERCISES = (
             ExerciseTestCase("mixed values", ([1, 2, 3, 4],), 6, visible=True),
             ExerciseTestCase("empty list", ([],), 0),
             ExerciseTestCase("repeated evens", ([2, 2, 5],), 4),
+        ),
+        hints=(
+            "Visit every value while maintaining a running total.",
+            "A number is even when its remainder after division by 2 is zero.",
+            "Inside the loop, add only values matching `number % 2 == 0`, then return the total.",
+        ),
+        solution_explanation=(
+            "Initialize a total at zero, iterate over the list, and add a number only when its "
+            "remainder modulo 2 is zero. Return the total after the loop so empty input naturally "
+            "produces zero."
         ),
     ),
     Exercise(
@@ -61,6 +80,16 @@ EXERCISES = (
             ExerciseTestCase("empty input", ([],), {}),
             ExerciseTestCase("case sensitivity", (["Code", "code"],), {"Code": 1, "code": 1}),
         ),
+        hints=(
+            "Use each word as a dictionary key and store its count as the value.",
+            "For each word, read its existing count with a default of zero before adding one.",
+            "Update `counts[word]` inside the loop, then return the dictionary after every word.",
+        ),
+        solution_explanation=(
+            "Start with an empty dictionary. For each word, retrieve the current value with "
+            "`counts.get(word, 0)`, add one, and store it back. Returning after the loop preserves "
+            "the exact case-sensitive keys from the input."
+        ),
     ),
     Exercise(
         id="first-duplicate",
@@ -79,6 +108,16 @@ EXERCISES = (
             ExerciseTestCase("duplicate order", ([2, 1, 3, 1, 2],), 1, visible=True),
             ExerciseTestCase("no duplicates", ([1, 2, 3],), None),
             ExerciseTestCase("immediate duplicate", ([7, 7],), 7),
+        ),
+        hints=(
+            "Track values already visited while scanning from left to right.",
+            "A set gives fast membership checks and can record each first occurrence.",
+            "Before adding a value to `seen`, return it if it is already present.",
+        ),
+        solution_explanation=(
+            "Create an empty set and scan the list in order. If the current value is already in "
+            "the set, return it immediately; otherwise add it. Return `None` only after the entire "
+            "list is processed."
         ),
     ),
 )

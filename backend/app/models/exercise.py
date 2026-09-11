@@ -26,6 +26,8 @@ class Exercise:
     function_name: str
     concept_tags: tuple[str, ...]
     test_cases: tuple[ExerciseTestCase, ...]
+    hints: tuple[str, str, str]
+    solution_explanation: str
 
     def __post_init__(self) -> None:
         required_text = (
@@ -34,6 +36,7 @@ class Exercise:
             self.description,
             self.starter_code,
             self.function_name,
+            self.solution_explanation,
         )
         if any(not value.strip() for value in required_text):
             raise ValueError("Exercise text fields cannot be blank")

@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 
+from app.api.assistance import router as assistance_router
 from app.api.exercises import router as exercises_router
 from app.api.health import router as health_router
 
@@ -12,6 +13,7 @@ def create_app() -> FastAPI:
     )
     application.include_router(health_router, prefix="/api")
     application.include_router(exercises_router, prefix="/api")
+    application.include_router(assistance_router, prefix="/api")
     return application
 
 
