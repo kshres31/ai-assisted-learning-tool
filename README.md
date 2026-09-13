@@ -104,6 +104,12 @@ attempt. See [`docs/experiment-design.md`](docs/experiment-design.md) for the pl
 metrics, limitations, and ethics. This is study infrastructure; it is not evidence that a study
 has taken place.
 
+The runnable study package includes the [usability test plan](docs/usability-test-plan.md),
+[participant instructions](docs/participant-instructions.md),
+[post-study questionnaire](docs/post-study-questionnaire.md), and an explicitly empty
+[results template](docs/results-template.md). Recruitment, consent, and any required review must be
+handled before involving real participants.
+
 ## Frontend workspace
 
 The dependency-free frontend in `frontend/` is served by FastAPI, so local development needs only

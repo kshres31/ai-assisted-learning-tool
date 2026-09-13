@@ -41,9 +41,9 @@ between conditions. Report group sizes and uncertainty; do not treat a tiny conv
 proof of a general learning effect. Hint usage is descriptive for the assisted group and should not
 be compared as though control participants could request hints.
 
-Active time is reported by the client and can be distorted by inactive tabs or interrupted
-sessions. A future frontend should pause its timer when the page is hidden and send incremental
-durations rather than total elapsed wall-clock time.
+Active time is reported by the client and can be distorted by interrupted sessions. The current
+frontend pauses its timer while the page is hidden and sends incremental durations at submission,
+but those controls cannot prove that every counted second involved active work.
 
 ## Privacy and ethics
 
