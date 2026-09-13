@@ -1,10 +1,10 @@
 # AI-Assisted Learning Tool
 
-An in-progress, local-first coding practice platform for Python exercises. The project is being
-built to explore a specific learning question: can staged, explanation-focused assistance help
+TraceLab is a complete local-first prototype for practicing Python exercises. It explores a
+specific learning question: can staged, explanation-focused assistance help
 students debug without immediately giving away the answer?
 
-The current milestone includes a typed FastAPI service and a curated catalog of four exercises.
+The prototype includes a typed FastAPI service and a curated catalog of four exercises.
 Students can browse or filter exercise summaries, retrieve starter code plus visible examples, and
 submit solutions to a constrained child-process runner. Hidden evaluation cases stay inside the
 domain model and are scrubbed from submission responses. Three staged hint levels and explicit
@@ -15,7 +15,14 @@ session, and progress flow. An optional Responses-compatible network provider is
 environment configuration. No usability study has been conducted and no participant outcomes are
 claimed.
 
-## Planned learning flow
+## Screenshot
+
+![TraceLab coding workspace](docs/images/workspace.jpg)
+
+The screenshot shows local practice mode with the bundled offline provider. No participant data is
+present.
+
+## Learning flow
 
 1. Browse a small curated exercise catalog.
 2. Edit and submit Python code against predefined tests.
@@ -26,9 +33,17 @@ claimed.
 ## Architecture
 
 FastAPI owns the REST boundary and generates interactive API documentation from typed models.
-Application services will own learning rules, while provider and execution interfaces will isolate
+Application services own learning rules, while provider and execution interfaces isolate
 the two highest-risk integrations: external AI calls and untrusted code execution. See
 [`docs/architecture.md`](docs/architecture.md) for the component diagram and safety boundary.
+
+## Exercise format
+
+Exercises are typed Python objects in `backend/app/content/exercises.py`. Each definition contains
+an identifier, title, description, difficulty, concept tags, starter code, expected behavior,
+function name, visible examples, hidden evaluation cases, three ordered hints, and a solution
+explanation. Public API schemas intentionally omit hidden inputs and expected outputs. This keeps
+content authoring straightforward while preventing the browser from receiving answer data.
 
 ## Local setup
 
@@ -136,6 +151,9 @@ pytest
 npm test
 ```
 
+The exact release verification and claim audit are recorded in
+[`docs/project-status.md`](docs/project-status.md).
+
 ## Environment and secrets
 
 `.env.example` documents the supported settings and `.env` is ignored by Git. The application reads
@@ -151,6 +169,28 @@ provider setup is documented in [`docs/ai-design.md`](docs/ai-design.md).
 - The local analytics store is not suitable for collecting identifying research data.
 - The lightweight text editor does not yet provide syntax highlighting or autocomplete.
 - The A/B experiment and usability study are designs, not completed research.
+
+## Lessons learned
+
+- Provider interfaces make offline development, deterministic testing, and optional network AI
+  possible without changing the learning workflow.
+- Separating internal exercise models from public schemas is a reliable way to prevent hidden-test
+  leakage.
+- Experiment rules must be enforced by the backend; hiding buttons in the browser is not enough.
+- Privacy improves when the event model is designed to exclude identity and source code from the
+  start rather than trying to remove them later.
+- Process isolation, timeouts, syntax checks, and restricted built-ins reduce local risk, but they
+  are not substitutes for an operating-system sandbox.
+
+## Future improvements
+
+- Run submissions in disposable containers with memory, filesystem, process, and network controls.
+- Evaluate the optional network provider with a privately configured API key and a documented test
+  protocol.
+- Add syntax highlighting, autocomplete, and an exercise authoring/import workflow.
+- Conduct the approved usability study with consenting participants and publish only aggregate,
+  honestly collected results.
+- Replace local SQLite storage with a deployment-ready data service if multi-user hosting is added.
 
 ## License
 

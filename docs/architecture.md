@@ -18,15 +18,15 @@ flowchart LR
     Analytics --> SQLite[(Local SQLite database)]
 ```
 
-## Planned responsibilities
+## Responsibilities
 
 - `backend/app/api` validates HTTP input and maps service results to response models.
 - `backend/app/models` contains internal exercise definitions, including hidden evaluation cases.
 - `backend/app/schemas` exposes a separate public representation that cannot leak hidden cases.
 - `backend/app/services` owns catalog, submission, assistance, experiment assignment, and analytics
   workflows.
-- `backend/app/ai` hides deterministic mock assistance behind an asynchronous provider interface;
-  a compatible external provider is a later milestone.
+- `backend/app/ai` keeps deterministic mock assistance and an optional Responses-compatible network
+  provider behind the same asynchronous interface.
 - `backend/app/execution` validates syntax, starts a separate isolated Python process with a
   restricted built-in namespace, and enforces a two-second timeout.
 - `backend/app/database` persists anonymous sessions and constrained learning events in SQLite.
@@ -35,8 +35,8 @@ flowchart LR
 
 ## Safety boundary
 
-Arbitrary student code must never be evaluated with `exec` inside a FastAPI worker. The first
-runner will start a separate Python process with a timeout, a temporary working directory, a
+Arbitrary student code is never evaluated with `exec` inside a FastAPI worker. The runner starts a
+separate Python process with a timeout, a temporary working directory, a
 restricted environment, and input-size limits. Those controls reduce accidental damage but do
 not provide the isolation required for an internet-facing deployment. A production version
 would use locked-down containers or dedicated sandbox workers with operating-system resource
