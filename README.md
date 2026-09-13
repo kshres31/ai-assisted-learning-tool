@@ -31,7 +31,7 @@ the two highest-risk integrations: external AI calls and untrusted code executio
 
 ## Local setup
 
-Requires Python 3.12 or newer. Node.js 20 or newer is needed only for the frontend logic tests.
+Requires Python 3.12 or newer. Node.js 24 or newer is needed only for the frontend logic tests.
 
 ```powershell
 python -m venv .venv
