@@ -1,0 +1,11 @@
+{
+  "name": "ai-assisted-learning-tool-frontend",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test frontend/tests/*.test.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

@@ -10,7 +10,8 @@ submit solutions to a constrained child-process runner. Hidden evaluation cases 
 domain model and are scrubbed from submission responses. Three staged hint levels and explicit
 solution explanations run through a modular offline provider. Anonymous A/B sessions assign and
 enforce control or assisted conditions while local SQLite analytics record only learning events. A
-compatible external provider and frontend workflows will be added in later milestones. No
+responsive vanilla JavaScript workspace connects the complete exercise, submission, assistance,
+session, and progress flow. A compatible external provider will be added in a later milestone. No
 usability study has been conducted and no participant outcomes are claimed.
 
 ## Planned learning flow
@@ -30,7 +31,7 @@ the two highest-risk integrations: external AI calls and untrusted code executio
 
 ## Local setup
 
-Requires Python 3.12 or newer.
+Requires Python 3.12 or newer. Node.js 20 or newer is needed only for the frontend logic tests.
 
 ```powershell
 python -m venv .venv
@@ -45,7 +46,8 @@ $env:PYTHONPATH = "backend"
 uvicorn app.main:app --reload
 ```
 
-Then open `http://127.0.0.1:8000/docs` for the generated API documentation.
+Then open `http://127.0.0.1:8000` for the learning workspace or
+`http://127.0.0.1:8000/docs` for the generated API documentation.
 
 Current endpoints:
 
@@ -102,11 +104,24 @@ attempt. See [`docs/experiment-design.md`](docs/experiment-design.md) for the pl
 metrics, limitations, and ethics. This is study infrastructure; it is not evidence that a study
 has taken place.
 
+## Frontend workspace
+
+The dependency-free frontend in `frontend/` is served by FastAPI, so local development needs only
+one running process. It provides exercise search and filtering, an accessible Python editor,
+visible test feedback, progressive hints, explicit explanations, anonymous condition assignment,
+confidence input, and a session progress summary. Dynamic API content is inserted with DOM text
+nodes rather than HTML strings.
+
+The active-time timer pauses while the page is hidden and resets after each submission. Its state
+transitions and other presentation rules are separated into pure JavaScript helpers so they can be
+tested without a browser framework.
+
 Run the checks:
 
 ```powershell
 ruff check backend
 pytest
+npm test
 ```
 
 ## Environment and secrets
@@ -120,6 +135,7 @@ Git. The default mock provider will require no key, paid account, or network con
 - The child-process runner is intentionally local-only and not a production security boundary.
 - The current assistance provider is a deterministic mock, not an external language model.
 - The local analytics store is not suitable for collecting identifying research data.
+- The lightweight text editor does not yet provide syntax highlighting or autocomplete.
 - The A/B experiment and usability study are designs, not completed research.
 
 ## License

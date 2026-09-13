@@ -1,7 +1,7 @@
 # Architecture
 
-The learning tool is split into a browser frontend, a typed FastAPI backend, and narrowly
-defined service boundaries. This keeps HTTP parsing, learning rules, AI integration, code
+The learning tool is split into a dependency-free browser frontend, a typed FastAPI backend, and
+narrowly defined service boundaries. This keeps HTTP parsing, learning rules, AI integration, code
 execution, and analytics from becoming one large application module.
 
 ```mermaid
@@ -30,8 +30,8 @@ flowchart LR
 - `backend/app/execution` validates syntax, starts a separate isolated Python process with a
   restricted built-in namespace, and enforces a two-second timeout.
 - `backend/app/database` persists anonymous sessions and constrained learning events in SQLite.
-- `frontend` will be a small dependency-free client so the learning interaction remains easy
-  to inspect and explain.
+- `frontend` is a small dependency-free client that owns presentation and ephemeral browser state;
+  the backend remains authoritative for exercise evaluation and experiment enforcement.
 
 ## Safety boundary
 
