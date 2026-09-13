@@ -4,6 +4,10 @@ from typing import Protocol
 from app.models.exercise import Exercise
 
 
+class AIProviderError(RuntimeError):
+    pass
+
+
 class AIProvider(Protocol):
     @property
     def name(self) -> str: ...

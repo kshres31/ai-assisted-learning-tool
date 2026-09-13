@@ -2,6 +2,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Header, HTTPException, status
 
+from app.ai.provider import AIProviderError
 from app.dependencies import AssistanceServiceDependency
 from app.schemas.assistance import AssistanceResponse, ExplainRequest, HintRequest
 from app.services.exercise_catalog import ExerciseNotFoundError
@@ -37,6 +38,11 @@ async def request_hint(
             status_code=status.HTTP_403_FORBIDDEN,
             detail=str(error),
         ) from error
+    except AIProviderError as error:
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail="Assistance provider unavailable",
+        ) from error
     return AssistanceResponse.from_domain(reply)
 
 
@@ -66,5 +72,10 @@ async def request_explanation(
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail=str(error),
+        ) from error
+    except AIProviderError as error:
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail="Assistance provider unavailable",
         ) from error
     return AssistanceResponse.from_domain(reply)

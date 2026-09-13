@@ -335,7 +335,13 @@ async function requestHint() {
       state.session?.session_id,
     );
     state.hintLevel = level;
-    state.assistanceMessages.push({ label: `Hint ${level}`, content: reply.content });
+    state.assistanceMessages.push({
+      label: `Hint ${level} · ${reply.provider}`,
+      content: reply.content,
+    });
+    if (reply.fallback_reason) {
+      showToast(reply.fallback_reason);
+    }
     renderAssistance();
     await refreshAnalytics();
   } catch (error) {
@@ -355,7 +361,13 @@ async function requestExplanation() {
       elements.codeEditor.value,
       state.session?.session_id,
     );
-    state.assistanceMessages.push({ label: "Explanation", content: reply.content });
+    state.assistanceMessages.push({
+      label: `Explanation · ${reply.provider}`,
+      content: reply.content,
+    });
+    if (reply.fallback_reason) {
+      showToast(reply.fallback_reason);
+    }
     renderAssistance();
     await refreshAnalytics();
   } catch (error) {

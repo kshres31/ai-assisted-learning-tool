@@ -1,6 +1,15 @@
 import asyncio
+from pathlib import Path
 
+from app.ai.provider import AIProviderError, ProviderSelection
+from app.content.exercises import EXERCISES
+from app.database.analytics_repository import AnalyticsRepository
+from app.dependencies import get_assistance_service
 from app.main import create_app
+from app.models.exercise import Exercise
+from app.services.assistance_service import AssistanceService
+from app.services.exercise_catalog import ExerciseCatalog
+from app.services.experiment_service import ExperimentService
 from httpx import ASGITransport, AsyncClient, Response
 
 
@@ -43,3 +52,35 @@ def test_assistance_endpoints_validate_level_and_exercise() -> None:
 
     assert invalid_level.status_code == 422
     assert missing.status_code == 404
+
+
+def test_provider_failure_returns_clean_gateway_error(tmp_path: Path) -> None:
+    class FailingProvider:
+        @property
+        def name(self) -> str:
+            return "failing-test-provider"
+
+        async def generate_hint(self, exercise: Exercise, code: str, level: int) -> str:
+            raise AIProviderError("sensitive upstream detail")
+
+        async def explain_solution(self, exercise: Exercise, code: str) -> str:
+            raise AIProviderError("sensitive upstream detail")
+
+    experiment = ExperimentService(AnalyticsRepository(tmp_path / "analytics.db"))
+    service = AssistanceService(
+        ExerciseCatalog(EXERCISES),
+        ProviderSelection(FailingProvider()),
+        experiment,
+    )
+    application = create_app()
+    application.dependency_overrides[get_assistance_service] = lambda: service
+
+    async def request_hint() -> Response:
+        transport = ASGITransport(app=application)
+        async with AsyncClient(transport=transport, base_url="http://test") as client:
+            return await client.post("/api/exercises/double-number/hint", json={"level": 1})
+
+    response = asyncio.run(request_hint())
+
+    assert response.status_code == 502
+    assert response.json() == {"detail": "Assistance provider unavailable"}

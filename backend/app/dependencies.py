@@ -64,7 +64,12 @@ SubmissionServiceDependency = Annotated[SubmissionService, Depends(get_submissio
 
 @lru_cache
 def get_ai_provider_selection() -> ProviderSelection:
-    return select_ai_provider(os.getenv("AI_PROVIDER"))
+    return select_ai_provider(
+        os.getenv("AI_PROVIDER"),
+        api_base_url=os.getenv("AI_API_BASE_URL"),
+        api_key=os.getenv("AI_API_KEY"),
+        model=os.getenv("AI_MODEL"),
+    )
 
 
 def get_assistance_service(

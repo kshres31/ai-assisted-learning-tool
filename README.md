@@ -11,8 +11,9 @@ domain model and are scrubbed from submission responses. Three staged hint level
 solution explanations run through a modular offline provider. Anonymous A/B sessions assign and
 enforce control or assisted conditions while local SQLite analytics record only learning events. A
 responsive vanilla JavaScript workspace connects the complete exercise, submission, assistance,
-session, and progress flow. A compatible external provider will be added in a later milestone. No
-usability study has been conducted and no participant outcomes are claimed.
+session, and progress flow. An optional Responses-compatible network provider is available through
+environment configuration. No usability study has been conducted and no participant outcomes are
+claimed.
 
 ## Planned learning flow
 
@@ -90,6 +91,11 @@ technique-focused, and likely-bug hints; a solution explanation is returned only
 explicit `/explain` endpoint. Provider identity and fallback reasons remain visible in responses.
 See [`docs/ai-design.md`](docs/ai-design.md) for the design and privacy rules.
 
+An optional `OpenAICompatibleProvider` calls a configurable Responses-style endpoint. It sends no
+hidden tests or session analytics, requests stateless handling with `store: false`, caps output,
+normalizes provider failures, and requires all credentials through environment variables. Its HTTP
+contract is tested with mock responses; the project does not claim that a paid live call was run.
+
 ## Experiment and analytics
 
 `POST /api/sessions` creates a random anonymous identifier and assigns either the `control` or
@@ -132,14 +138,16 @@ npm test
 
 ## Environment and secrets
 
-Copy `.env.example` to `.env` only when provider configuration is needed. `.env` is ignored by
-Git. The default mock provider will require no key, paid account, or network connection.
+`.env.example` documents the supported settings and `.env` is ignored by Git. The application reads
+process environment variables directly; set them in PowerShell or through your deployment secret
+manager. The default mock provider requires no key, paid account, or network connection. External
+provider setup is documented in [`docs/ai-design.md`](docs/ai-design.md).
 
 ## Current limitations
 
 - Exercises are bundled in Python; an authoring/import format has not been added yet.
 - The child-process runner is intentionally local-only and not a production security boundary.
-- The current assistance provider is a deterministic mock, not an external language model.
+- The external provider contract is mock-tested but has not been verified with a live paid request.
 - The local analytics store is not suitable for collecting identifying research data.
 - The lightweight text editor does not yet provide syntax highlighting or autocomplete.
 - The A/B experiment and usability study are designs, not completed research.
